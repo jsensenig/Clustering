@@ -35,6 +35,8 @@ private:
     fNChannel        (c.fNChannel       ),
     fChannelExtent   (c.fChannelExtent  ),
     fChannelWidth    (c.fChannelWidth   ),
+    fTimeSpan        (c.fTimeSpan       ),
+    fLength          (c.fLength         ),
     fPosition        (c.fPosition       ),
     fSize            (c.fSize           ),
     fExtent          (c.fExtent         ),
@@ -60,6 +62,8 @@ protected:
     fNChannel        (0),
     fChannelExtent   (),
     fChannelWidth    (0),
+    fTimeSpan        (0),
+    fLength          (0),
     fPosition        (),
     fSize            (),
     fExtent          (),
@@ -84,6 +88,8 @@ protected:
     fNChannel        (0),
     fChannelExtent   (),
     fChannelWidth    (0),
+    fTimeSpan        (0),
+    fLength          (0),
     fPosition        (),
     fSize            (),
     fExtent          (),
@@ -107,10 +113,12 @@ protected:
     std::map<size_t,size_t> apa;
     std::map<int,size_t> marleyIndices;
     std::set<int> channel;
+    std::set<double> hit_time;
     std::map<GenType,double> hittype_peak;
     for (auto const& it: fHit) {
       marleyIndices[it->GetMarleyIndex()]++;
       channel.insert(it->GetChannel());
+      hit_time.emplace(it->GetTime());
       fSumPeak += it->GetPeak();
       for (auto const& d : AllDirection) {
         fPosition[d] += it->GetPosition(d) * it->GetPeak();
@@ -121,7 +129,7 @@ protected:
       hittype_peak[it->GetGenType()] += it->GetPeak();
     }
     size_t max = 0;
-    for (auto const& it:marleyIndices){
+    for (auto const& it: marleyIndices){
       if(it.second>max){
         fTrueMarleyIndex = it.first;
       }
@@ -132,6 +140,8 @@ protected:
     fChannelExtent.first  = *channel.begin();
     fChannelExtent.second = *channel.rbegin();
     fChannelWidth = (size_t)((int)fChannelExtent.second - (int)fChannelExtent.first);
+    // Also get the magnitude of the time spanned by Hits in cluster
+    fTimeSpan = std::abs(*hit_time.begin() - *hit_time.rbegin());
 
     SetTypeFromSumHit(hittype_peak);
     
@@ -146,6 +156,13 @@ protected:
       fExtent[d].second = *(all_pos[d].rbegin());
       fSize[d] = fExtent[d].second - fExtent[d].first;
     }
+
+    // x = 2*time*v_drift (factor of 2 is to convert time from 0.5us to 1us ticks) v_drift = ~1.633 mm/us (@500V/cm)
+    // z = channel*wire_pitch (wire_pitch = 5mm)
+    // L = sqrt(x^2 + z^2)
+
+    fLength = sqrt(static_cast<double>(fChannelWidth*fChannelWidth*25) + 4.*fTimeSpan*fTimeSpan*2.667);
+
   };
 
   
@@ -207,6 +224,8 @@ public:
   double GetStartChannel ()                  const { return (double)fChannelExtent.first ; };
   double GetEndChannel   ()                  const { return (double)fChannelExtent.second; };
   double GetChannelWidth ()                  const { return (double)fChannelWidth        ; };
+  double GetTimeSpan     ()                  const { return fTimeSpan;                     };
+  double GetLength       ()                  const { return fLength;                       };
   std::vector<Hit*>& GetHit()                      { return fHit                         ; };
   
   void SetPosition     (const Direction d, const double p) { fPosition     [d] = p; };
@@ -232,6 +251,8 @@ protected:
   size_t fNChannel;
   std::pair<size_t,size_t> fChannelExtent;
   size_t fChannelWidth;
+  double fTimeSpan;
+  double fLength;
   std::map<Direction,double> fPosition;
   std::map<Direction,double> fSize;
   std::map<Direction,std::pair<double,double>> fExtent;

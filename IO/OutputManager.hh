@@ -12,7 +12,7 @@
 #include "DataContainer/WireCluster.hh"
 #include "IO/InputManager.hh"
 #include "Algorithm/ClusterEngine.hh"
-#include "Algorithm/ClusterEnergyEstimator.hh"
+//#include "Algorithm/ClusterEnergyEstimator.hh"
 
 class OutputManager {
   
@@ -30,7 +30,7 @@ public:
       it.second->Fill();
   };
 
-  void Fill(std::string name) {
+  void Fill(const std::string& name) {
     bool found = false;
     for (auto& it: fTrees) {
       if (it.first == name) {
@@ -38,7 +38,7 @@ public:
         it.second->Fill();
       }
     }
-    if (found == false) {
+    if ( !found ) {
       std::cout << "Cannot fill the tree " << name
                 << " because it doesnt exist." << std::endl;
     }
@@ -62,9 +62,9 @@ public:
     return outputtrees;
   };
 
-  void SetOutputFile(const std::string s="") { filename=s; };
+  void SetOutputFile(const std::string& s="") { filename=s; };
 
-  void AddOutputTree(const std::string s="") {
+  void AddOutputTree(const std::string& s="") {
     if (fTrees.find(s) != fTrees.end()) {
       fTrees[s] = new TTree(s.c_str(),s.c_str());
     } else {
@@ -110,6 +110,8 @@ public:
   double EndChan       ;
   double APA           ;
   double ChanWidth     ;
+  double Length        ;
+  double TimeSpan      ;
   double NChan         ;
   double Type          ;
   double NHits         ;
@@ -193,6 +195,8 @@ public:
     fTrees["WireHitClusters"]->Branch("StartChan",      &StartChan,      "StartChan/D"     );
     fTrees["WireHitClusters"]->Branch("EndChan",        &EndChan,        "EndChan/D"       );
     fTrees["WireHitClusters"]->Branch("ChanWidth",      &ChanWidth,      "ChanWidth/D"     );
+    fTrees["WireHitClusters"]->Branch("Length",         &Length,         "Length/D"        );
+    fTrees["WireHitClusters"]->Branch("TimeSpan",       &TimeSpan,       "TimeSpan/D"      );
     fTrees["WireHitClusters"]->Branch("NChan",          &NChan,          "NChan/D"         );
     fTrees["WireHitClusters"]->Branch("Type",           &Type,           "Type/D"          );
     fTrees["WireHitClusters"]->Branch("NHits",          &NHits,          "NHits/D"         );
@@ -338,6 +342,8 @@ public:
     StartChan      = clust->GetStartChannel();
     EndChan        = clust->GetEndChannel();
     ChanWidth      = clust->GetChannelWidth();
+    Length         = clust->GetLength();
+    TimeSpan       = clust->GetTimeSpan();
     NChan          = clust->GetNChannel();
     Type           = clust->GetType();
     NHits          = clust->GetNHit();
@@ -396,7 +402,7 @@ public:
   };
 
   void FillClusterTimingInfo(ClusterEngine* clusterEngine,
-                             ClusterEnergyEstimator* clusterEReco = NULL,
+                             //ClusterEnergyEstimator* clusterEReco = NULL,
                              int nWire=0, int nOpti=0){
     TimeOrdering_OptClustTime  .clear();
     TimeOrdering_WireClustTime .clear();
@@ -420,8 +426,8 @@ public:
     Clustering_WireClustTime    = clusterEngine->GetElapsedTime_Clustering   ();
     Clustering_OptClustTime     = clusterEngine->GetElapsedTime_Clustering   ();
 
-    if (clusterEReco)
-      EnergyReconstruction_WireClustTime = clusterEReco->GetElapsedTime();
+    //if (clusterEReco)
+    //  EnergyReconstruction_WireClustTime = clusterEReco->GetElapsedTime();
 
     fTrees["TimingInfo"]->Fill();
   };
