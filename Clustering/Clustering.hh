@@ -10,7 +10,7 @@
 
 #include "DataContainer/OpticalCluster.hh"
 #include "DataContainer/WireCluster.hh"
-#include "Algorithm/ClusterEnergyEstimator.hh"
+//#include "Algorithm/ClusterEnergyEstimator.hh"
 #include "Algorithm/ClusterEngine.hh"
 #include "Algorithm/Trigger.hh"
 
@@ -19,7 +19,7 @@ class Clustering: public ClusteringBase {
 public:
 
   Clustering():
-    fEReco  (NULL),
+    //fEReco  (NULL),
     fNAPA   (  -1),
     fSorting(   0){
     InitialiseBase();
@@ -110,15 +110,15 @@ public:
 
   ~Clustering()
     {
-      if (fEReco) delete fEReco;
-      fEReco = NULL;
+      //if (fEReco) delete fEReco;
+      //fEReco = NULL;
     };
 
 private:
   SimpleTrigger* fSimpleTrigger;
 
   std::string fERecoXMLFile;
-  ClusterEnergyEstimator* fEReco;
+  //ClusterEnergyEstimator* fEReco;
 
   std::vector<float> fWireClusterCount   ;
   std::vector<float> fOpticalClusterCount;

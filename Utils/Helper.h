@@ -28,6 +28,7 @@
 #include <limits>
 #include <unistd.h>
 #include <vector>
+#include <set>
 
 class Helper;
 inline const std::vector<int>& getColors(int);

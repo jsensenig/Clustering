@@ -9,7 +9,7 @@ int main(int argc, char** argv){
   extern int  optopt;
 
   std::string InputFile="";
-  bool Simple=0;
+  bool Simple=false;
   
   while ( (opt = getopt(argc, argv, "i:s")) != -1 ) {  // for each option...
     switch ( opt ) {
@@ -17,7 +17,7 @@ int main(int argc, char** argv){
       InputFile = optarg;
       break;
     case 's':
-      Simple=1;
+      Simple=true;
       break;
     case '?':  // unknown option...
       std::cerr << "Unknown option: '" << char(optopt) << "'!" << std::endl;
@@ -29,7 +29,7 @@ int main(int argc, char** argv){
     exit(1);
   }
   
-  if (Simple==1) {
+  if (Simple) {
     SimpleEfficiencyPlot e(InputFile);
     e.Run();
     return 0;

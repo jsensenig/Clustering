@@ -2,11 +2,11 @@
 
 void Clustering::RunClustering(){
 
-  if (fERecoXMLFile == "") {
-    std::cout << "Not using energy reconstruction!!" << std::endl;
-  } else {
-    fEReco = new ClusterEnergyEstimator(fERecoXMLFile);
-  }
+  //if (fERecoXMLFile == "") {
+  //  std::cout << "Not using energy reconstruction!!" << std::endl;
+  //} else {
+  //  fEReco = new ClusterEnergyEstimator(fERecoXMLFile);
+  //}
 
   fClustEng = new ClusterEngine();
   fClustEng->SetSorting(fSorting);
@@ -102,12 +102,12 @@ void Clustering::RunClustering(){
       
       fClustEng->ClusterOpticalHits(vec_OptiHit, vec_OptiCluster);
       fClustEng->ClusterHits2      (vec_WireHit, vec_WireCluster);
-      if (fEReco) fEReco->EstimateEnergy(vec_WireCluster);
+      //if (fEReco) fEReco->EstimateEnergy(vec_WireCluster);
       
       fTrigger->IsTriggering(vec_OptiCluster);
       fTrigger->IsTriggering(vec_WireCluster);
       
-      fSOM->FillClusterTimingInfo(fClustEng,fEReco,vec_WireHit.size(), vec_OptiHit.size());
+      fSOM->FillClusterTimingInfo(fClustEng,vec_WireHit.size(), vec_OptiHit.size());
       
       if (fPrintLevel > -1) {
         std::cout << "----------------------------------------" << std::endl;

@@ -17,7 +17,7 @@ public:
   virtual bool IsTriggering(OpticalCluster& c) const { c. SetIsTriggering(true); return true; };
   virtual bool IsTriggering(WireCluster*    c) const { c->SetIsTriggering(true); return true; };
   virtual bool IsTriggering(OpticalCluster* c) const { c->SetIsTriggering(true); return true; };
-  virtual bool IsTriggering(const std::vector<WireCluster*   >& c) const {
+  virtual bool IsTriggering(const std::vector<WireCluster*>& c) const {
     bool trigger=false;
     for (auto const& it: c)
       if (IsTriggering(it)) trigger = true;
@@ -30,7 +30,7 @@ public:
     return trigger;
   };
   // by default does an OR
-  virtual bool IsTriggering(const std::vector<WireCluster*   >& wc,
+  virtual bool IsTriggering(const std::vector<WireCluster*>& wc,
                             const std::vector<OpticalCluster*>& oc) const {
     for (auto const& it: wc)
       if (IsTriggering(it)) return true;
