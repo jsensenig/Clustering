@@ -372,22 +372,23 @@ int main(int argc, char** argv){
   TEfficiency* eff_posy = new TEfficiency("eff_posy", ";Position y [cm]",  50, -650, 650);
   TEfficiency* eff_posz = new TEfficiency("eff_posz", ";Position z [cm]",  50, -100, 1300);
 
-  
+  std::cout << "Number of entries in cluster tree: " << t_Output_triggeredclusteredhits->GetEntries() << std::endl;
   std::map<int, std::map<int,bool> > nDetectedEvent;
   for(int i=0; i<t_Output_triggeredclusteredhits->GetEntries();++i) {
     t_Output_triggeredclusteredhits->GetEntry(i);
     PrintProgress(i, t_Output_triggeredclusteredhits->GetEntries());
     std::map<int, int> map_gentype_nhit_sign;
     std::map<int, int> map_gentype_nhit_back;
+    std::cout << "Config: " << Config << "  Requested Config: " << RequestedConfig << std::endl;
     if (Config != RequestedConfig) continue;
     //t_Output_triggeredclusteredhits->GetEntry(it2);
     nDetectedEvent[Event][-1] = false;
-    
-    if (Type==0) {
-      // std::cout << "----------" << std::endl;
-      // std::cout << "Entry " << i << std::endl;
-      // std::cout << "Event " << Event << std::endl;
-      // std::cout << "StartChan " << StartChan << std::endl;
+
+    if (Type==0) { // Type=1=SN neutrino; Type=0=everything else
+       //std::cout << "----------" << std::endl;
+       //std::cout << "Entry " << i << std::endl;
+       //std::cout << "Event " << Event << std::endl;
+       //std::cout << "StartChan " << StartChan << std::endl;
       //map_gentype_nhit_back = GetMapOfHit(HitGenType);
       std::map<int, int> m_gentype;
       for (auto const& it:(*HitGenType))
